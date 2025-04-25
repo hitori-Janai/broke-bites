@@ -75,7 +75,7 @@ export default function QrCodeGenerator() {
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-lg">
-      <h1 className="text-2xl font-bold">QR Code Generator</h1>
+      <h1 className="text-2xl font-bold">Share QR Code with your friends and family</h1>
       
       <div className="w-full">
         <label htmlFor="text-input" className="block mb-2 text-sm font-medium">
