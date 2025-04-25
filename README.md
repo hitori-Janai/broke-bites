@@ -75,9 +75,11 @@ COMMENT ON COLUMN public.user_qrcode.score IS 'Score, default value is 0';
 > - Maintain existing state hooks; use async/await for fetch calls.
 > - Style the 'Shake' button with a hover effect and cursor pointer.”
 
-## [Vercel](vercel.com)
+## [Vercel](https://vercel.com)
 
 > DATABASE_URL=postgresql://neondb_owner:npg_jR7efZiD3IMq@ep-polished-poetry-a44p3osy-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+## [Clarity](https://clarity.microsoft.com)
 
 ## Getting Started
 
