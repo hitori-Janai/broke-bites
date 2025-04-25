@@ -1,8 +1,9 @@
 import { Pool } from 'pg';
 
-const pool = new Pool({
-  connectionString: 'postgresql://neondb_owner:npg_jR7efZiD3IMq@ep-polished-poetry-a44p3osy-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require',
-});
+// Use environment variables instead of hardcoding credentials
+const connectionString = process.env.DATABASE_URL
+
+const pool = new Pool({ connectionString });
 
 export async function query(text: string, params?: any[]) {
   try {
@@ -41,6 +42,29 @@ export async function incrementQrCodeScore(id: number) {
   const result = await query(
     'UPDATE public.user_qrcode SET score = score + 1 WHERE id = $1 RETURNING *',
     [id]
+  );
+  
+  return result.rows[0];
+}
+
+// Function to get a random QR code
+export async function getRandomQrCode() {
+  // Check if there are any records
+  const countResult = await query('SELECT COUNT(*) FROM public.user_qrcode');
+  const count = parseInt(countResult.rows[0].count);
+
+  if (count === 0) {
+    // Return a default record if no records exist
+    return {
+      id: 0,
+      qrcode_txt: 'https://nextjs.org',
+      score: 0
+    };
+  }
+
+  // Get a random record
+  const result = await query(
+    'SELECT * FROM public.user_qrcode ORDER BY RANDOM() LIMIT 1'
   );
   
   return result.rows[0];

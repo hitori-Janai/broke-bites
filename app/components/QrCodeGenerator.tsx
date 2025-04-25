@@ -1,6 +1,6 @@
 'use client';
 
-import { useState} from 'react';
+import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 
 type QrCodeData = {
@@ -13,6 +13,7 @@ export default function QrCodeGenerator() {
   const [text, setText] = useState('https://nextjs.org');
   const [qrCodeData, setQrCodeData] = useState<QrCodeData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
@@ -50,6 +51,25 @@ export default function QrCodeGenerator() {
     }
   };
 
+  const handleShake = async () => {
+    setIsShaking(true);
+    try {
+      const response = await fetch('/api/random');
+      
+      if (!response.ok) {
+        throw new Error('Failed to get random QR code');
+      }
+      
+      const data = await response.json();
+      setText(data.qrcode_txt);
+      setQrCodeData(data);
+    } catch (error) {
+      console.error('Error fetching random QR code:', error);
+    } finally {
+      setIsShaking(false);
+    }
+  };
+
   // Button is enabled if there's text
   const isButtonEnabled = text.length > 0;
 
@@ -83,17 +103,27 @@ export default function QrCodeGenerator() {
           </div>
         )}
         
-        <button
-          onClick={handleLike}
-          disabled={!isButtonEnabled || isLoading}
-          className={`px-4 py-2 rounded transition-colors ${
-            isButtonEnabled 
-              ? 'bg-red-500 hover:bg-red-600 text-white' 
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          {isLoading ? 'Liking...' : qrCodeData ? 'Like Again' : 'Like'}
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={handleLike}
+            disabled={!isButtonEnabled || isLoading}
+            className={`px-4 py-2 rounded transition-colors ${
+              isButtonEnabled 
+                ? 'bg-red-500 hover:bg-red-600 text-white' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            {isLoading ? 'Liking...' : qrCodeData ? 'Like Again' : 'Like'}
+          </button>
+          
+          <button
+            onClick={handleShake}
+            disabled={isShaking}
+            className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors cursor-pointer"
+          >
+            {isShaking ? 'Shaking...' : 'Shake'}
+          </button>
+        </div>
       </div>
       
       {text.length > 0 && (
